@@ -60,7 +60,7 @@ class RecipeSchema(Schema):
             raise ValidationError("Ime recepta ne sme biti prazno!")
     @validates('ingredients')
     def validate_ingredients(self,ingredients):
-        if ingredients == '':
+        if ingredients == '' or ingredients == ',':
             raise ValidationError("Morate uneti sastojke za dati recept!")
     @validates('recipe_text')
     def validate_recipe_text(self,recipe_text):
