@@ -1,0 +1,5 @@
+/__pycache__
+/migrations
+/foods/__pycache__
+/foods/data.sqlite
+/all_tests
