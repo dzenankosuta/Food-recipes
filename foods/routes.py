@@ -8,33 +8,14 @@ import requests, json, clearbit
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, text
 import jwt
+import datetime
 from functools import wraps
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash,check_password_hash
-
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 clearbit.key='sk_72efbbc8858d259bee2c660da4ca259e'
 
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-
-        if not token:
-            return jsonify({'message' : 'Token is missing!'}), 401
-
-        try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(id=data['id']).first()
-        except:
-            return jsonify({'message' : 'Token is invalid!'}), 401
-
-        return f(current_user, *args, **kwargs)
-
-    return decorated
 
 
 @app.route("/", methods=["GET"])
@@ -87,34 +68,29 @@ def register():
             return jsonify(err.messages,err.valid_data)
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def login():
     """This is a function that gives us a token for the required routes."""
-    auth = request.authorization
+    body=request.get_json()
 
-    if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, \
-        {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    try:
+        login_schema=LoginSchema()
+        result=login_schema.load(body)
+    except ValidationError as err:
+        return jsonify(err.messages,err.valid_data)
 
-    user = User.query.filter_by(username=auth.username).first()
-
-    if not user:
-        return make_response('Could not verify', 401, \
-        {'WWW-Authenticate' : 'Basic realm="Login required!"'})
-
-    if check_password_hash(user.password_hash, auth.password):
-        token = jwt.encode({'id' : user.id}, app.config['SECRET_KEY'])
-
-        return jsonify({'token' : token.decode('UTF-8')})
-
-    return make_response('Could not verify', 401, \
-    {'WWW-Authenticate' : 'Basic realm="Login required!"'})
-
-
+    user=User.query.filter_by(username=body['username']).filter_by(password=body['password']).first()
+    if user != None:
+        expires = datetime.timedelta(days=7)
+        access_token= create_access_token(identity=user.id, expires_delta=expires)
+        return jsonify({'token': access_token}, 200)
+    return 'Uneli ste pogrešno korisničko ime ili lozinku!'
 
 @app.route('/add', methods=['POST'])
-@token_required
-def add(current_user):
+@jwt_required()
+def add():
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     """This is a function that allows you to add a recipe to the database."""
     try:
 
@@ -156,9 +132,11 @@ def add(current_user):
 
 
 @app.route('/all', methods=['GET'])
-@token_required
-def all(current_user):
+@jwt_required()
+def all():
     """This function displays all recipes from the database."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         svi= Recipe.query.all()
         nova_recipe_schema=NovaRecipeSchema(many=True)
@@ -179,11 +157,13 @@ def my_users():
             return jsonify(err.messages,err.valid_data)
 
 @app.route('/rate', methods=['POST'])
-@token_required
-def rate(current_user):
+@jwt_required()
+def rate():
     """This function is for assigning a recipe rating. \
     It should also be emphasized that the current user cannot \
     rate their own recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         body= request.get_json()
         rate_schema=RateSchema()
@@ -206,9 +186,11 @@ def rate(current_user):
             return jsonify(err.messages,err.valid_data)
 
 @app.route('/prosek',methods=['GET'])
-@token_required
-def prosek(current_user):
+@jwt_required()
+def prosek():
     """This is a function that gives us an average rating for each recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     prosek= db.session.query(Recipe.name, db.func.avg(Rate.ocena)).\
     outerjoin(Rate, Recipe.id==Rate.recipe_id).group_by(Recipe.name).all()
 
@@ -216,10 +198,12 @@ def prosek(current_user):
     [(f"Naziv recepta: {x[0]}",f"Prosečna ocena je: {x[1]}") for x in prosek]})
 
 @app.route('/najcesci', methods=['GET'])
-@token_required
-def najcesci(current_user):
+@jwt_required()
+def najcesci():
     """This is a function that gives us 5 the most commonly used recipes, \
     as well as the number of times used."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     sql = text('SELECT name, COUNT(id) \
     FROM ingredients \
     GROUP BY name \
@@ -231,11 +215,13 @@ def najcesci(current_user):
     return jsonify({"Najčešće korišćeni sastojci su": common})
 
 @app.route('/delete/<id>', methods=['DELETE'])
-@token_required
-def delete(current_user,id):
+@jwt_required()
+def delete(id):
     """This function is used to delete the recipe by entering the id. \
     It should also be emphasized that the current user cannot delete \
     someone else's recipe."""
+    id_user=get_jwt_identity()
+    current_user=User.query.get(id_user)
     try:
         # I nacin za proveru da li je uneti ID INTEGER
         #for i in id:
@@ -267,9 +253,11 @@ def delete(current_user,id):
             return jsonify(err.messages,err.valid_data)
 
 @app.route('/my', methods=['GET'])
-@token_required
-def my(current_user):
+@jwt_required()
+def my():
     """This function displays all recipes of the current user from the database."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         moji=Recipe.query.filter_by(user_id=current_user.id).all()
         recipe_schema=RecipeSchema(many=True)
@@ -279,10 +267,12 @@ def my(current_user):
         return jsonify(err.messages, err.valid_data)
 
 @app.route('/cbit', methods=['GET'])
-@token_required
-def cbit(current_user):
+@jwt_required()
+def cbit():
     """This is a function that gives us additional user information \
     based on the email address entered."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         body=request.get_json()
         cbit_schema=CbitSchema()
@@ -295,10 +285,12 @@ def cbit(current_user):
         return jsonify(err.messages, err.valid_data)
 
 @app.route('/search_by_name', methods=['GET'])
-@token_required
-def search_by_name(current_user):
+@jwt_required()
+def search_by_name():
     """This is a function that gives us recipes \
     based on the name of the entered recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         body=request.get_json()
         name_recipe_schema=NameRecipeSchema()
@@ -320,10 +312,12 @@ def search_by_name(current_user):
         return jsonify(err.messages, err.valid_data)
 
 @app.route('/search_by_text', methods=['GET'])
-@token_required
-def search_by_text(current_user):
+@jwt_required()
+def search_by_text():
     """This is a function that gives us recipes \
     based on the text of the entered recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         body=request.get_json()
         text_recipe_schema=TextRecipeSchema()
@@ -345,10 +339,12 @@ def search_by_text(current_user):
         return jsonify(err.messages, err.valid_data)
 
 @app.route('/search_by_ingredients', methods=['GET'])
-@token_required
-def search_by_ingredients(current_user):
+@jwt_required()
+def search_by_ingredients():
     """This is a function that gives us recipes \
     based on the ingredients of the entered recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
     try:
         body=request.get_json()
         ingredients_recipe_schema=IngredientsRecipeSchema()
@@ -370,11 +366,13 @@ def search_by_ingredients(current_user):
         return jsonify(err.messages, err.valid_data)
 
 @app.route('/min_ingredients', methods=['GET'])
-@token_required
-def min_ingredients(current_user):
+@jwt_required()
+def min_ingredients():
     """This is a function that gives us the name of the recipe \
     with the minimum number of ingredients, \
     as well as the number of ingredients for that recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
 
     sql = text('SELECT recipes.name, COUNT(ingredients.id) \
     FROM recipes INNER JOIN ingredients \
@@ -388,11 +386,13 @@ def min_ingredients(current_user):
     return jsonify({'Recept sa najmanjim brojem sastojaka je ': recmin})
 
 @app.route('/max_ingredients', methods=['GET'])
-@token_required
-def max_ingredients(current_user):
+@jwt_required()
+def max_ingredients():
     """This is a function that gives us the name of the recipe \
     with the maximum number of ingredients, \
     as well as the number of ingredients for that recipe."""
+    id=get_jwt_identity()
+    current_user=User.query.get(id)
 
     sql = text('SELECT recipes.name, COUNT(ingredients.id) \
     FROM recipes INNER JOIN ingredients \

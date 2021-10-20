@@ -35,6 +35,10 @@ class NovaUserSchema(Schema):
     email = fields.Email(required=True)
     password_hash = fields.String(required=True)
 
+class LoginSchema(Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
+
 class RateSchema(Schema):
     ocena=fields.Integer(required=True)
     recipe_id=fields.Integer(required=True)

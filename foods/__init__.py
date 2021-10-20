@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
-
+from flask_jwt_extended import JWTManager
 
 app=Flask(__name__)
 
@@ -19,6 +19,6 @@ login= LoginManager(app)
 login.init_app(app)
 migrate = Migrate(app, db, render_as_batch=True)
 ma=Marshmallow(app)
-
+jwt = JWTManager(app)
 
 from foods import routes

@@ -1,11 +1,10 @@
 import flask_unittest
 from app import create_app
-from flask import request, json
+from flask import request,json
 import requests
 
 
-
-class TestRate(flask_unittest.ClientTestCase):
+class TestRecipeWithMaxIng(flask_unittest.ClientTestCase):
 
     app=create_app()
 
@@ -15,7 +14,11 @@ class TestRate(flask_unittest.ClientTestCase):
         client.environ_base['HTTP_AUTHORIZATION'] = 'Bearer ' + token
 
 
-    def test_rate(self,client):
 
-        resp = client.post('/rate')
+    def test_max_ingredients(self,client):
+        resp = client.get('/max_ingredients')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_min_ingredients(self,client):
+        resp = client.get('/min_ingredients')
         self.assertEqual(resp.status_code, 200)

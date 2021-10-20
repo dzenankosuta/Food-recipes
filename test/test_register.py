@@ -1,19 +1,12 @@
 import unittest
 from flask import jsonify, request
 import requests,json
-#from foods.__init__ import app,db
-#from foods.models import *
-#from foods.schemas import *
-
 
 class TestRegister(unittest.TestCase):
 
-    @classmethod
-    def tearDownClass(cls):
-        print('tearDownClass')
 
     def setUp(self):
-        print('setUp')
+
         self.url="http://127.0.0.1:5000/register"
         self.body={
         "email":"ab@gmail.com",

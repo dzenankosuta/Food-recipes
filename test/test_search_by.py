@@ -8,19 +8,21 @@ class TestSearchByText(flask_unittest.ClientTestCase):
 
     app=create_app()
 
+
     def setUp(self,client):
-        response = requests.get('http://127.0.0.1:5000/login', auth=('dzenankosuta', 'afc14'))
-        self.token=json.loads(response.text)['token']
-        self.headers = {'x-access-token': self.token}
+        resp = client.post('/login', json={"username":"dzenankosuta","password":"afc14"})
+        token= resp.get_json()[0]["token"]
+        client.environ_base['HTTP_AUTHORIZATION'] = 'Bearer ' + token
+
 
     def test_search_by_1name(self,client):
-        resp = client.get('/search_by_name', headers=self.headers)
+        resp = client.get('/search_by_name')
         self.assertEqual(resp.status_code, 200)
 
     def test_search_by_2text(self,client):
-        resp = client.get('/search_by_text', headers=self.headers)
+        resp = client.get('/search_by_text')
         self.assertEqual(resp.status_code, 200)
 
     def test_search_by_3ingredients(self,client):
-        resp = client.get('/search_by_ingredients', headers=self.headers)
+        resp = client.get('/search_by_ingredients')
         self.assertEqual(resp.status_code, 200)

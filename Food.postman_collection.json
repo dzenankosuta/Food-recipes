@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3dfa2b66-67a8-4ef6-a1f7-a7e39322906d",
+		"_postman_id": "6383b93c-ef0d-4abc-8c60-c8707406bbe0",
 		"name": "Food",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,7 +8,10 @@
 		{
 			"name": "index",
 			"protocolProfileBehavior": {
-				"disableBodyPruning": true
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {
+					"host": true
+				}
 			},
 			"request": {
 				"method": "GET",
@@ -36,6 +39,11 @@
 		},
 		{
 			"name": "register",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -62,30 +70,12 @@
 		},
 		{
 			"name": "login",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "username",
-							"value": "dzenankosuta",
-							"type": "string"
-						},
-						{
-							"key": "password",
-							"value": "afc14",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\r\n    \"username\":\"dzenankosuta\",\r\n    \"password\":\"afc14\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -113,16 +103,11 @@
 			"name": "Add recipe",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "sifra",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "covjek",
+							"key": "token",
+							"value": "{{token}}",
 							"type": "string"
 						}
 					]
@@ -130,14 +115,15 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\":\"torta\",\r\n    \"ingredients\":\"slag,jagode\",\r\n    \"recipe_text\":\"Torta se sprema iz 5 koraka.\"\r\n}",
+					"raw": "{\r\n    \"name\":\"sladoled\",\r\n    \"ingredients\":\"vanila,jagoda\",\r\n    \"recipe_text\":\"sladoled se sprema u posebnoj masini.\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -163,13 +149,29 @@
 		},
 		{
 			"name": "All recipes",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -183,7 +185,7 @@
 					"query": [
 						{
 							"key": "",
-							"value": null,
+							"value": "",
 							"disabled": true
 						}
 					]
@@ -193,13 +195,29 @@
 		},
 		{
 			"name": "Rate",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -225,13 +243,29 @@
 		},
 		{
 			"name": "Prosečne ocene recepata",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -248,13 +282,29 @@
 		},
 		{
 			"name": "Najčešće korišćeni sastojci",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -271,23 +321,39 @@
 		},
 		{
 			"name": "Delete",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "DELETE",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
-					"raw": "{{url}}/delete/5",
+					"raw": "{{url}}/delete/2",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"delete",
-						"5"
+						"2"
 					]
 				}
 			},
@@ -295,13 +361,18 @@
 		},
 		{
 			"name": "My recipes",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "",
+							"value": "{{token}}",
 							"type": "string"
 						}
 					]
@@ -309,9 +380,10 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -329,15 +401,29 @@
 		{
 			"name": "clearbit",
 			"protocolProfileBehavior": {
-				"disableBodyPruning": true
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {
+					"host": true
+				}
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -363,6 +449,11 @@
 		},
 		{
 			"name": "All users",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -381,15 +472,29 @@
 		{
 			"name": "Search recipe by name",
 			"protocolProfileBehavior": {
-				"disableBodyPruning": true
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {
+					"host": true
+				}
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -419,12 +524,23 @@
 				"disableBodyPruning": true
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -454,12 +570,23 @@
 				"disableBodyPruning": true
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -485,13 +612,29 @@
 		},
 		{
 			"name": "Recipes with minimum number of ingredients",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -508,13 +651,29 @@
 		},
 		{
 			"name": "Recipes with maximum number of ingredients",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"host": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [
 					{
-						"key": "x-access-token",
-						"value": "{{token}}",
-						"type": "text"
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
@@ -528,6 +687,51 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "afc14",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "peraperic",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://127.0.0.1:5000\n"
+		},
+		{
+			"key": "token",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYzNDc2ODAyMCwianRpIjoiYmM1NmIxMDctOTQ5NS00NWRmLTk2ZjctNTNmOTU1OTkwOTM2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjM0NzY4MDIwLCJleHAiOjE2MzUzNzI4MjB9.yMFHE68OpkZe3OiyteTxoOXRibquLw2b4sN4Z-YH32U"
 		}
 	]
 }
